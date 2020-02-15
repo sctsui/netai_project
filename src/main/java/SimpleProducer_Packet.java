@@ -1,24 +1,22 @@
 //import util.properties packages
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+
 import java.util.Properties;
 
 //import simple producer packages
-import org.apache.kafka.clients.producer.Producer;
-
 //import KafkaProducer packages
-import org.apache.kafka.clients.producer.KafkaProducer;
-
 //import ProducerRecord packages
-import org.apache.kafka.clients.producer.ProducerRecord;
 
 //Create java class named “SimpleProducer”
-public class SimpleProducer {
+public class SimpleProducer_Packet {
 
     public static void main(String[] args) throws Exception{
 
-
-
         //Assign topicName to string variable
-        String topicName = "test";
+        String topicName = "test3";
 
         // create instance for properties to access producer configs
         Properties props = new Properties();
@@ -50,9 +48,12 @@ public class SimpleProducer {
         Producer<String, String> producer = new KafkaProducer
                 <String, String>(props);
 
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < 1; i++){
             producer.send(new ProducerRecord<String, String>(topicName,
-                    Integer.toString(i), Integer.toString(i)));
+                    "127.0.0.2, 8080, 1,1,1,1, 9090, tcp", "Packet data 1"));
+            producer.send(new ProducerRecord<String, String>(topicName,
+                    "127.0.0.2, 8080, 1,1,1,2, 9090, tcp", "Packet data 2"));
+        }
         System.out.println("Message sent successfully");
         producer.close();
     }
