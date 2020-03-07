@@ -1,35 +1,26 @@
-import com.google.inject.internal.cglib.core.$DefaultGeneratorStrategy;
-import kafka.Kafka;
 import kafka.serializer.StringDecoder;
-import org.apache.hadoop.mapred.TextInputFormat;
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.input.StreamInputFormat;
-import org.apache.spark.rdd.RDD;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 
-import static spark.Spark.*;
-import org.apache.spark.streaming.kafka.*;
 import scala.Tuple2;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
-
-import org.apache.spark.streaming.api.java.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
     private static final int PORT = 8080;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
+        FileWriter myWriter = new FileWriter("labeledOutput.txt");
 
         SparkConf sparkConf = new SparkConf().setMaster("local[*]").setAppName("KafkaConsumer");
         String packet_topics = "TutorialTopic";
@@ -82,19 +73,34 @@ public class Main {
 
         streamingContext.sparkContext().setLogLevel("ERROR");
 
+        // Join key=5tuples, val=payload/alert by 5tuple key
+        // out (labeled KeyValue): key=common 5tuple, Tuple2 value = <payload, alert>
         JavaPairRDD<String, String> finalIDSKeyValuePair = IDSKeyValuePair;
         directKafkaStream.foreachRDD(rdd->{
             JavaPairRDD<String, Tuple2<String, Optional<String>>> out = rdd.leftOuterJoin(finalIDSKeyValuePair);
+
+            //todo: debug - writing to file
+            //out.saveAsTextFile("file:///home/user/spark/join.txt");
             out.foreach(data -> {
                 String final_value = data._2._2.isPresent()? data._2._2.get() : "Not Alerted";
                 System.out.println("final_key="+data._1() + " final_value=" + final_value);
+                writeToFile(myWriter, "final_key=" + data._1() + " final_value=" + final_value);
             });
         });
-
+        myWriter.close();
         //directKafkaStream.print();
 
         streamingContext.start();
         streamingContext.awaitTermination();
+
+    }
+
+    private static void writeToFile(FileWriter fw, String contents){
+        try {
+            fw.write(String.format("%s%n",contents));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
