@@ -40,8 +40,8 @@ public class Main {
         Map<String, String> kafkaParams = new HashMap<>();
         kafkaParams.put("metadata.broker.list", brokers);
 
-        //JavaRDD<String> IDSDataSet = streamingContext.sparkContext().textFile("file:///home/user/spark/IDSLogs/alert_csv.txt", 1);
-        JavaRDD<String> IDSDataSet = streamingContext.sparkContext().textFile("file:///home/sabrina/IdeaProjects/netai_project/IDSLogs/1.txt", 1);
+        JavaRDD<String> IDSDataSet = streamingContext.sparkContext().textFile("file:///home/user/spark/IDSLogs/alert_csv.txt", 1);
+        //JavaRDD<String> IDSDataSet = streamingContext.sparkContext().textFile("file:///home/sabrina/IdeaProjects/netai_project/IDSLogs/1.txt", 1);
 
 
         JavaPairRDD<String, String> IDSKeyValuePair = IDSDataSet.mapToPair(k -> {
@@ -81,15 +81,13 @@ public class Main {
                 );
 
         streamingContext.sparkContext().setLogLevel("ERROR");
-//        //directKafkaStream.print();
-
-        System.out.println("Number of KV pairs : " + IDSKeyValuePair.count());
 
         JavaPairRDD<String, String> finalIDSKeyValuePair = IDSKeyValuePair;
         directKafkaStream.foreachRDD(rdd->{
             JavaPairRDD<String, Tuple2<String, Optional<String>>> out = rdd.leftOuterJoin(finalIDSKeyValuePair);
             out.foreach(data -> {
-                System.out.println("final_key="+data._1() + " final_value=" + data._2());
+                String final_value = data._2._2.isPresent()? data._2._2.get() : "Not Alerted";
+                System.out.println("final_key="+data._1() + " final_value=" + final_value);
             });
         });
 
