@@ -1,7 +1,12 @@
-169.231.53.132,40.79.78.1,51830,443,TCP,Alerted0
-169.231.53.132,40.79.78.1,51831,443,TCP,Alerted1
-169.231.53.132,40.79.78.1,51832,443,TCP,Alerter2
-169.231.53.132,40.79.78.1,51833,443,TCP,Alerted3
-169.231.53.132,40.79.78.1,51834,443,TCP,Alerted4
-169.231.53.132,40.79.78.1,51835,443,TCP,Alerted5
-169.231.53.132,40.79.78.1,51846,443,TCP,Alerted6
+172.16.117.103, 18389, 196.32.32.19, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.117.132, 18442, 206.101.198.45, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18443, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18444, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+, , , , ARP, 1, 112:1:1, "(arp_spoof) unicast ARP request"
+172.16.115.87, 18445, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18447, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18448, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.112.20, 53, 195.115.218.108, 53, UDP, 23, 122:23:1, "(port_scan) UDP filtered portsweep"
+172.16.115.87, 18449, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18450, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
+172.16.115.87, 18451, 209.67.29.11, 80, TCP, 13, 119:13:1, "(http_inspect) HTTP header line terminated by LF without a CR"
