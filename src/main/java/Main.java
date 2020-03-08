@@ -14,7 +14,6 @@ import scala.Tuple2;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
     private static final int PORT = 8080;
@@ -76,31 +75,19 @@ public class Main {
         // Join key=5tuples, val=payload/alert by 5tuple key
         // out (labeled KeyValue): key=common 5tuple, Tuple2 value = <payload, alert>
         JavaPairRDD<String, String> finalIDSKeyValuePair = IDSKeyValuePair;
-        directKafkaStream.foreachRDD(rdd->{
-            JavaPairRDD<String, Tuple2<String, Optional<String>>> out = rdd.leftOuterJoin(finalIDSKeyValuePair);
 
-            //todo: debug - writing to file
-            //out.saveAsTextFile("file:///home/user/spark/join.txt");
+       directKafkaStream.foreachRDD(rdd->{
+            JavaPairRDD<String, Tuple2<String, Optional<String>>> out = rdd.leftOuterJoin(finalIDSKeyValuePair);
             out.foreach(data -> {
                 String final_value = data._2._2.isPresent()? data._2._2.get() : "Not Alerted";
                 System.out.println("final_key="+data._1() + " final_value=" + final_value);
-                writeToFile(myWriter, "final_key=" + data._1() + " final_value=" + final_value);
             });
-        });
-        myWriter.close();
-        //directKafkaStream.print();
+            out.saveAsTextFile("/home/user/spark/output/");
+       });
 
         streamingContext.start();
         streamingContext.awaitTermination();
 
     }
 
-    private static void writeToFile(FileWriter fw, String contents){
-        try {
-            fw.write(String.format("%s%n",contents));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
